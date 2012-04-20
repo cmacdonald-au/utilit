@@ -74,11 +74,15 @@ abstract class BaseObject
     /**
      * Let observers know something happened
      */
-    public function notify($state, $condition)
+    public function notify($state, $condition, $source)
     {
+        if (empty($this->observers)) {
+            return;
+        }
+
         foreach ($this->observers as $k => $v) {
             try {
-                $v->notification($state, $condition, $this);
+                $v->notification($state, $condition, $source, $this);
             } catch (Exception $e) {
                 core\Log::warn('Observer `'.$k.'` threw an exception. Code:`'.$e->getCode().'` Message:`'.$e->getMessage().'`');
             }
@@ -169,16 +173,18 @@ abstract class BaseObject
         $conditional .= ucfirst(strtolower($source));
 
         if (is_callable(array($this, $conditional)) === false) {
-            return true;
+            return $this->notify(BaseObjectObserver::STATE_NORMAL, $condition, $source);
         }
 
         try {
             if ($this->$conditional() === false) {
+                $this->notify(BaseObjectObserver::STATE_FAILURE, $condition, $source);
                 throw new Exception\conditionalFailure($conditional.' failed');
             }
         } catch (Exception $e) {
             throw new Exception\conditionalFailure($conditional.' failed with `'.$e->getMessage().'`');
         }
+        $this->notify(BaseObjectObserver::STATE_SUCCESS, $condition, $source);
 
     }
 
