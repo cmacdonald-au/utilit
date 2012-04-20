@@ -109,7 +109,7 @@ abstract class DataObject implements \Countable, \ArrayAccess, \IteratorAggregat
      */
     public function __set($name, $value)
     {
-        if (is_array($value)) {
+        if (is_array($value) || is_object($value)) {
             $this->data[$name] = new static();
             foreach ($value as $k => $v) {
                 $this->data[$name]->$k = $v;
