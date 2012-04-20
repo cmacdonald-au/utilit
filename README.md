@@ -1,4 +1,4 @@
 utilit
 ======
 
-Xapian controller
+"Not a framework"
