@@ -71,6 +71,40 @@ abstract class DataObject implements \Countable, \ArrayAccess, \IteratorAggregat
     }
 
     /**
+     * Casting - To{What}
+     */
+    public function toArray()
+    {
+        $rtn = array();
+        foreach ($this as $k => $v) {
+            if ($v instanceOf self) {
+                $rtn[$k] = $v->toArray();
+            } else {
+                $rtn[$k] = $v;
+            }
+        }
+        return $rtn;
+    }
+
+    public function toObject()
+    {
+        $rtn = new \StdClass();
+        foreach ($this as $k => $v) {
+            if ($v instanceOf self) {
+                $rtn->$k = $v->toObject();
+            } else {
+                $rtn->$k = $v;
+            }
+        }
+        return $rtn;
+    }
+
+    public function toJson()
+    {
+        return json_encode($this->toObject());
+    }
+
+    /**
      * Standard overloaded accessors
      */
     public function __set($name, $value)

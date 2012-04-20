@@ -39,6 +39,7 @@ class Config extends DataObject
         }
 
         $configFile = $path.'/'.$file;
+        Log::debug('Expecting config to be at `'.$configFile.'`');
         if (file_exists($configFile.'.php')) {
             include($configFile.'.php');
             return;

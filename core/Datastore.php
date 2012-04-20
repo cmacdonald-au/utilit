@@ -12,6 +12,7 @@ class Datastore
     public static $pool;
 
     protected $conn;
+    protected $backendType;
 
     const TYPE_NULL    = 0;
     const TYPE_CORE    = 1;
@@ -56,6 +57,7 @@ class Datastore
 
     public static function get($type, $params)
     {
+        Log::debug('Fetching a `'.$type.'` datastore with {'.var_export($params, true).'}');
         $ds = new self($type, $params);
         self::$pool[$ds->getDSN()] = $ds;
 
@@ -69,8 +71,11 @@ class Datastore
         }
 
         $this->type   = $type;
-        $this->config = $params;
+        $this->backendType = array_search($type, self::$backendMap);
+        $defaultConfig = Config::get('datastores')->{$this->backendType}->default->toArray();
+        $this->config = array_merge($params, $defaultConfig);
 
+        Log::debug('Building a `'.$type.'` datastore with {'.var_export($this->config, true).'}');
         $class = __CLASS__.'\\'.$type;
         $this->conn = call_user_func(array($class, 'initialise'), $this->config);
     }
@@ -83,6 +88,15 @@ class Datastore
         return $this->conn->getDSN();
     }
 
+    /**
+     * Datasource querying
+     */
+
+    public function fetch()
+    {
+
+    }
+
 }
 
 namespace utilit\core\Datastore;
@@ -90,8 +104,13 @@ namespace utilit\core\Datastore;
 interface workerInterface 
 {
     public static function initialise($config);
-    public static function createConn($dsn);
     public function getDSN($params=null);
+    public function get($key, $params=null);
+    public function set($key, $data, $params=null);
+    public function delete($data, $params=null);
+    public function getMany($key, $params=null);
+    public function execGet($rawData);
+    public function execSet($rawData);
 }
 
 class connectFailed extends \Exception {}

@@ -113,10 +113,10 @@ abstract class BaseObject
 
         if ($data === false) {
             if ($this->cacheable) {
-                $data = $this->getFromCache();
+                $data = $this->loadFromCache();
             }
             if ($data === false) {
-                $data = $this->getFromDatastore();
+                $data = $this->loadFromDatastore();
             }
             if ($data === false) {
                 throw new Exception\loadFailure('Failed to load data');
