@@ -1,0 +1,48 @@
+{
+  "datastores": {
+    "mysql": {
+      "params": [
+        
+      ],
+      "default": {
+        "host": "127.0.0.1",
+        "user": "utilit",
+        "pass": "",
+        "db": "utilit",
+        "params": {
+          "transactions": true,
+          "master": true
+        }
+      },
+      "read": {
+        "host": "localhost",
+        "user": "utilit",
+        "pass": "",
+        "db": "utilit",
+        "params": {
+          "transactions": false
+        }
+      }
+    },
+    "pgsql": {
+      "host": "localhost",
+      "user": "utilit",
+      "pass": "",
+      "db": "utilit",
+      "params": {
+        "transactions": true,
+        "master": true
+      }
+    },
+    "memcache": {
+      "primary": {
+        "host": "localhost",
+        "port": "11211"
+      },
+      "sessions": {
+        "host": "localhost",
+        "port": "11222"
+      }
+    }
+  }
+}
